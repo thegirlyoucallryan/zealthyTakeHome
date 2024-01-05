@@ -1,4 +1,11 @@
-import { Button, Pressable, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { supabase } from "../../supabase";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useState } from "react";
@@ -21,6 +28,7 @@ export function TicketDetailScreen({
   const [open, setOpen] = useState<boolean>(false);
   const [response, setResponse] = useState<string>("");
 
+  //Status options for dropdown
   const [items, setItems] = useState([
     { label: "New", value: "New" },
     { label: "Resolved", value: "Resolved" },
@@ -52,25 +60,40 @@ export function TicketDetailScreen({
       style={{
         backgroundColor: "white",
         alignSelf: "center",
-
+        width: Platform.OS === "web" ? 500 : "auto",
         padding: 30,
       }}
     >
-      <Pressable onPress={close}>
+      <Pressable
+        onPress={close}
+        style={{
+          backgroundColor: "blue",
+          alignSelf: "flex-end",
+          marginBottom: 10,
+          borderRadius: 10,
+        }}
+      >
         <Text
           style={{
-            alignSelf: "flex-end",
-            marginBottom: 30,
-            textDecorationLine: "underline",
+            // alignSelf: "flex-end",
+            // marginBottom: 10,
+
+            color: "white",
+            padding: 10,
           }}
         >
-          Close X
+          Close
         </Text>
       </Pressable>
       <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
         <Text style={{ textTransform: "capitalize" }}>Name: {item.name}</Text>
-        <Text>Status:{status ? status : item.status}</Text>
+        <Text style={{ textTransform: "capitalize", marginTop: 5 }}>
+          email: {item.email}
+        </Text>
       </View>
+      <Text style={{ textTransform: "capitalize" }}>
+        Status: {status ? status : item.status}
+      </Text>
       <View>
         <View
           style={{
@@ -98,12 +121,19 @@ export function TicketDetailScreen({
         </View>
       </View>
 
-      <Text style={{ marginVertical: 15 }}>
+      <Text
+        style={{
+          marginVertical: 15,
+          backgroundColor: "whiteSmoke",
+          padding: 10,
+          borderRadius: 10,
+        }}
+      >
         Description: {item.description}
       </Text>
 
       <View>
-        <Text>Response</Text>
+        <Text>Response: </Text>
         <TextInput
           style={{
             margin: 15,

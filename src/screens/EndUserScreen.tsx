@@ -8,11 +8,18 @@ import {
   StyleSheet,
 } from "react-native";
 import { supabase } from "../../supabase";
+import { Ticket } from "./AdminPanelScreen";
+import { useQueryClient } from "react-query";
+
+//for Photos/attachements I am deeming it a string.  Normally, I would ask for permissions to access media gallery and if permissions were granted users could select an image/file,
+//  I'd use like expo fs or react native file system, convert the file to a blob and store it in a storage bucket like s3 to be hosted and pass the string url from that to the backend.
+//I currently have a project in which I am doing this if you'd like to see.
 
 export function EndUserScreen() {
   const { control, handleSubmit, reset } = useForm();
-
-  const submitTicket = async (data) => {
+  const queryClient = useQueryClient();
+  const queryKey = "tickets";
+  const submitTicket = async (data: Ticket) => {
     const { name, email, photo, description } = data;
     const { data: responseData, error } = await supabase
       .from("zealthy")
@@ -23,7 +30,8 @@ export function EndUserScreen() {
     } else {
       console.log(
         "New ticket submitted:",
-        responseData ? responseData[0] : "noResponseData"
+        responseData ? responseData[0] : "noResponseData",
+        queryClient.invalidateQueries(queryKey)
       );
       reset({});
     }
@@ -111,20 +119,6 @@ export function EndUserScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-  },
-  formContainer: {
-    width: "100%",
-    maxWidth: 400,
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    elevation: 3,
-  },
   input: {
     marginBottom: 10,
     paddingVertical: 8,
@@ -132,14 +126,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
-  },
-  ticketsTitle: {
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  ticketText: {
-    fontSize: 16,
-    marginBottom: 5,
   },
 });

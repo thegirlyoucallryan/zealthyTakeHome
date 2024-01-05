@@ -1,19 +1,27 @@
-import { useEffect, useState } from "react";
-import { FlatList, Text, StyleSheet, Pressable } from "react-native";
+import { useState } from "react";
+import {
+  FlatList,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { supabase } from "../../supabase";
 import { View } from "react-native";
-import { TicketDetailScreen } from "./TicketDetailScreen";
+import { Status, TicketDetailScreen } from "./TicketDetailScreen";
 import { useQuery } from "react-query";
 
-interface Ticket {
+export interface Ticket {
   id: number;
   name: string;
-  status: string;
-  // Add other properties as needed
+  email: string;
+  status: Status;
+  photo: string;
+  description: string;
 }
 
 export function AdminPanelScreen() {
-  const [currentTicket, setCurrentTicket] = useState(null);
+  const [currentTicket, setCurrentTicket] = useState<Ticket>(null);
 
   const fetchTickets = async (): Promise<Ticket[]> => {
     try {
@@ -52,7 +60,7 @@ export function AdminPanelScreen() {
         ]}
       >
         <Text> {item.id}</Text>
-        <Text>{item.name}</Text>
+        <Text style={{ textTransform: "capitalize" }}>{item.name}</Text>
         <Text> {item.status}</Text>
       </Pressable>
     );
@@ -79,6 +87,7 @@ export function AdminPanelScreen() {
       <Text style={{ color: "blue", fontSize: 30, textAlign: "center" }}>
         Tickets:
       </Text>
+      {isLoading && <ActivityIndicator size={20} color={"blue"} />}
       {currentTicket ? (
         <TicketDetailScreen
           stat={currentTicket.status}
@@ -100,32 +109,6 @@ export function AdminPanelScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     padding: 16,
-  },
-  formContainer: {
-    width: "100%",
-    maxWidth: 400,
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    elevation: 3,
-  },
-  input: {
-    marginBottom: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-  },
-  ticketsTitle: {
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  ticketText: {
-    fontSize: 16,
-    marginBottom: 5,
   },
 });
